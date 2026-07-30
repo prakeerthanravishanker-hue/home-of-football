@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Home of Football</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Work+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --pitch:#1B4332;
+    --pitch-dark:#0E2419;
+    --chalk:#F5F2EA;
+    --chalk-dim:#E9E4D6;
+    --navy:#14213D;
+    --gold:#C9A227;
+    --red:#9B2226;
+    --line: rgba(20,33,61,0.14);
+    --line-light: rgba(245,242,234,0.16);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--chalk);
+    color:var(--navy);
+    font-family:'Work Sans', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; scroll-behavior:auto !important;}
+  }
+  a{color:inherit;}
+
+  /* ---------- NAV ---------- */
+  .nav{
+    position:sticky; top:0; z-index:50;
+    background:var(--chalk);
+    border-bottom:1px solid var(--line);
+    display:flex; align-items:center; gap:20px;
+    padding:14px 28px;
+    flex-wrap:wrap;
+  }
+  .nav-mark{
+    font-family:'Anton', sans-serif;
+    font-size:20px;
+    letter-spacing:0.02em;
+    white-space:nowrap;
+  }
+  .nav-mark span{color:var(--gold);}
+  .search-wrap{
+    display:flex; align-items:center;
+    border:1px solid var(--navy);
+    border-radius:2px;
+    padding:6px 10px;
+    background:var(--chalk);
+    flex:1 1 220px;
+    max-width:340px;
+    gap:8px;
+  }
+  .search-wrap input{
+    border:none; background:transparent; outline:none;
+    font-family:'Space Mono', monospace;
+    font-size:13px; width:100%;
+    color:var(--navy);
+  }
+  .search-wrap svg{flex-shrink:0; opacity:0.6;}
+  .chips{display:flex; gap:8px; flex-wrap:wrap; margin-left:auto;}
+  .chip{
+    font-family:'Space Mono', monospace;
+    font-size:11px; letter-spacing:0.03em;
+    padding:6px 10px;
+    border:1px solid var(--line);
+    border-radius:2px;
+    cursor:pointer;
+    background:transparent;
+    color:var(--navy);
+    transition:all .15s ease;
+  }
+  .chip:hover{border-color:var(--navy);}
+  .chip.active{background:var(--navy); color:var(--chalk); border-color:var(--navy);}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    background:radial-gradient(120% 140% at 15% 0%, var(--pitch) 0%, var(--pitch-dark) 70%);
+    color:var(--chalk);
+    padding:88px 28px 0;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero::before{
+    content:"";
+    position:absolute; inset:0;
+    background-image:
+      repeating-linear-gradient(90deg, rgba(245,242,234,0.035) 0px, rgba(245,242,234,0.035) 1px, transparent 1px, transparent 120px);
+    pointer-events:none;
+  }
+  .hero-inner{max-width:1180px; margin:0 auto; position:relative;}
+  .eyebrow{
+    font-family:'Space Mono', monospace;
+    font-size:12px; letter-spacing:0.18em;
+    color:var(--gold);
+    text-transform:uppercase;
+    margin-bottom:18px;
+  }
+  .hero h1{
+    font-family:'Anton', sans-serif;
+    font-weight:400;
+    font-size:clamp(48px, 10vw, 128px);
+    line-height:0.92;
+    margin:0 0 22px;
+    letter-spacing:0.01em;
+  }
+  .hero p.sub{
+    font-size:clamp(16px, 2vw, 20px);
+    max-width:560px;
+    color:var(--chalk-dim);
+    line-height:1.5;
+    margin:0 0 44px;
+  }
+  .hero p.sub em{color:var(--gold); font-style:normal;}
+
+  /* ticker */
+  .ticker-frame{
+    border-top:1px solid var(--line-light);
+    border-bottom:1px solid var(--line-light);
+    overflow:hidden;
+    white-space:nowrap;
+    position:relative;
+  }
+  .ticker-track{
+    display:inline-flex;
+    animation: scroll-left 62s linear infinite;
+    padding:16px 0;
+  }
+  .ticker-track span{
+    font-family:'Space Mono', monospace;
+    font-size:13px;
+    letter-spacing:0.04em;
+    color:var(--chalk-dim);
+    padding:0 28px;
+    border-right:1px solid var(--line-light);
+  }
+  @keyframes scroll-left{
+    from{transform:translateX(0);}
+    to{transform:translateX(-50%);}
+  }
+
+  .stat-row{
+    display:flex; flex-wrap:wrap; gap:0;
+    max-width:1180px; margin:0 auto;
+    padding:34px 0 46px;
+  }
+  .stat{
+    flex:1 1 160px;
+    padding:0 28px 0 0;
+    border-right:1px solid var(--line-light);
+    margin-right:28px;
+  }
+  .stat:last-child{border-right:none;}
+  .stat b{
+    font-family:'Anton', sans-serif;
+    font-size:36px; font-weight:400; display:block;
+    color:var(--chalk);
+  }
+  .stat span{
+    font-family:'Space Mono', monospace;
+    font-size:11px; letter-spacing:0.08em;
+    color:var(--gold); text-transform:uppercase;
+  }
+
+  /* ---------- CONFEDERATION SECTIONS ---------- */
+  .conf-section{
+    max-width:1180px; margin:0 auto;
+    padding:56px 28px 8px;
+    border-top:1px solid var(--line);
+  }
+  .conf-section:first-of-type{border-top:none;}
+  .conf-head{
+    display:flex; align-items:baseline; gap:16px;
+    margin-bottom:6px; flex-wrap:wrap;
+  }
+  .conf-head h2{
+    font-family:'Anton', sans-serif;
+    font-weight:400;
+    font-size:clamp(28px,4vw,42px);
+    margin:0;
+    letter-spacing:0.01em;
+  }
+  .conf-head .conf-full{
+    font-family:'Space Mono', monospace;
+    font-size:12px;
+    color:#6b7280;
+    letter-spacing:0.04em;
+  }
+  .conf-count{
+    margin-left:auto;
+    font-family:'Space Mono', monospace;
+    font-size:12px;
+    color:var(--navy);
+    border:1px solid var(--line);
+    border-radius:2px;
+    padding:4px 8px;
+  }
+  .conf-desc{
+    max-width:640px;
+    font-size:14px; color:#4b5563;
+    margin:6px 0 26px;
+    line-height:1.5;
+  }
+
+  table.league-table{
+    width:100%;
+    border-collapse:collapse;
+    margin-bottom:8px;
+  }
+  table.league-table thead th{
+    text-align:left;
+    font-family:'Space Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:#6b7280;
+    font-weight:400;
+    padding:0 10px 10px;
+    border-bottom:1px solid var(--navy);
+  }
+  table.league-table td{
+    padding:13px 10px;
+    border-bottom:1px solid var(--line);
+    font-size:15px;
+    vertical-align:middle;
+  }
+  td.league-name a{
+    color:var(--navy);
+    text-decoration:none;
+    border-bottom:1px solid var(--line);
+    padding-bottom:1px;
+    transition:border-color .12s ease, color .12s ease;
+  }
+  td.league-name a:hover{
+    color:var(--red);
+    border-bottom-color:var(--red);
+  }
+  td.league-name a::after{
+    content:"↗";
+    font-size:11px;
+    margin-left:6px;
+    opacity:0.45;
+  }
+  table.league-table tr.row{
+    border-left:3px solid transparent;
+    transition:background .12s ease;
+  }
+  table.league-table tr.row:hover{background:rgba(20,33,61,0.035);}
+  td.rank{
+    font-family:'Space Mono', monospace;
+    color:#9ca3af;
+    font-size:13px;
+    width:36px;
+  }
+  td.league-name{font-weight:600;}
+  td.country{color:#374151;}
+  td.flag{width:34px; font-size:19px;}
+
+  .conf-row-uefa{border-left-color: var(--gold) !important;}
+  .conf-row-conmebol{border-left-color: var(--red) !important;}
+  .conf-row-concacaf{border-left-color: var(--pitch) !important;}
+  .conf-row-caf{border-left-color: #B5651D !important;}
+  .conf-row-afc{border-left-color: #2A4D69 !important;}
+  .conf-row-ofc{border-left-color: #4A7C8C !important;}
+
+  .empty-state{
+    display:none;
+    max-width:1180px; margin:60px auto; padding:0 28px 80px;
+    text-align:center;
+  }
+  .empty-state.show{display:block;}
+  .empty-state h3{
+    font-family:'Anton', sans-serif; font-weight:400;
+    font-size:26px; margin-bottom:8px;
+  }
+  .empty-state p{color:#6b7280; font-size:14px;}
+
+  /* ---------- STAT LEADERBOARD ---------- */
+  .stats-section{
+    background:var(--navy);
+    color:var(--chalk);
+    padding:60px 28px 68px;
+  }
+  .stats-inner{max-width:1180px; margin:0 auto;}
+  .stats-head{margin-bottom:8px;}
+  .stats-head .eyebrow{color:var(--gold);}
+  .stats-head h2{
+    font-family:'Anton', sans-serif; font-weight:400;
+    font-size:clamp(30px,4.5vw,46px);
+    margin:0 0 10px;
+  }
+  .stats-head p{
+    max-width:620px; font-size:14px;
+    color:rgba(245,242,234,0.65);
+    line-height:1.55; margin:0 0 40px;
+  }
+  .stats-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:1px;
+    background:var(--line-light);
+    border:1px solid var(--line-light);
+  }
+  @media (max-width:900px){
+    .stats-grid{grid-template-columns:repeat(2, 1fr);}
+  }
+  @media (max-width:600px){
+    .stats-grid{grid-template-columns:1fr;}
+  }
+  .stat-card{
+    background:var(--navy);
+    padding:26px 24px 22px;
+  }
+  .stat-card h3{
+    font-family:'Anton', sans-serif; font-weight:400;
+    font-size:19px; letter-spacing:0.01em;
+    margin:0 0 3px;
+  }
+  .stat-card .stat-scope{
+    font-family:'Space Mono', monospace;
+    font-size:10.5px; letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:rgba(245,242,234,0.45);
+    margin-bottom:20px;
+    display:block;
+  }
+  .bar-row{
+    display:flex; align-items:center; gap:10px;
+    margin-bottom:13px;
+  }
+  .bar-row .bar-rank{
+    font-family:'Space Mono', monospace;
+    font-size:11px; color:rgba(245,242,234,0.4);
+    width:14px; flex-shrink:0;
+  }
+  .bar-row .bar-main{flex:1; min-width:0;}
+  .bar-row .bar-label{
+    display:flex; justify-content:space-between; align-items:baseline;
+    gap:8px; margin-bottom:4px;
+  }
+  .bar-row .bar-name{
+    font-size:12.5px; font-weight:600;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .bar-row .bar-value{
+    font-family:'Space Mono', monospace;
+    font-size:12px; color:var(--gold);
+    flex-shrink:0;
+  }
+  .bar-track{
+    height:5px; border-radius:2px;
+    background:rgba(245,242,234,0.12);
+    overflow:hidden;
+  }
+  .bar-fill{
+    height:100%; border-radius:2px;
+    background:var(--gold);
+  }
+  .stat-card:nth-child(1) .bar-fill{background:var(--gold);}
+  .stat-card:nth-child(2) .bar-fill{background:#C97757;}
+  .stat-card:nth-child(3) .bar-fill{background:#7BAE7F;}
+  .stat-card:nth-child(4) .bar-fill{background:#8FA6C9;}
+  .stat-card:nth-child(5) .bar-fill{background:#C97757;}
+  .stat-card:nth-child(6) .bar-fill{background:#7BAE7F;}
+  .stats-foot{
+    margin-top:22px;
+    font-family:'Space Mono', monospace;
+    font-size:11px; line-height:1.7;
+    color:rgba(245,242,234,0.4);
+  }
+
+  /* ---------- CLUB POWER RANKINGS ---------- */
+  .clubs-section{
+    max-width:1180px; margin:0 auto;
+    padding:60px 28px 20px;
+  }
+  .clubs-head h2{
+    font-family:'Anton', sans-serif; font-weight:400;
+    font-size:clamp(30px,4.5vw,44px);
+    margin:0 0 10px;
+  }
+  .clubs-head p{
+    max-width:660px; font-size:14px; color:#4b5563;
+    line-height:1.55; margin:0 0 30px;
+  }
+  .clubs-table-wrap{
+    overflow-x:auto;
+    border:1px solid var(--line);
+  }
+  table.clubs-table{
+    width:100%; border-collapse:collapse;
+    min-width:760px;
+  }
+  table.clubs-table thead th{
+    text-align:left;
+    font-family:'Space Mono', monospace;
+    font-size:10.5px; letter-spacing:0.07em;
+    text-transform:uppercase;
+    color:#6b7280; font-weight:400;
+    padding:12px 14px;
+    border-bottom:1px solid var(--navy);
+    background:var(--chalk-dim);
+    white-space:nowrap;
+  }
+  table.clubs-table th.num, table.clubs-table td.num{text-align:right;}
+  table.clubs-table td{
+    padding:14px;
+    border-bottom:1px solid var(--line);
+    font-size:14.5px;
+    white-space:nowrap;
+  }
+  table.clubs-table td.rank{
+    font-family:'Space Mono', monospace;
+    color:#9ca3af; font-size:13px;
+  }
+  table.clubs-table td.club-name{font-weight:700;}
+  table.clubs-table td.club-league{
+    font-size:12px; color:#6b7280;
+  }
+  table.clubs-table td.num{
+    font-family:'Space Mono', monospace;
+    font-size:13.5px;
+  }
+  table.clubs-table td.num.worth{color:var(--red); font-weight:700;}
+  table.clubs-table tr:hover{background:rgba(20,33,61,0.03);}
+  .clubs-foot{
+    margin-top:14px;
+    font-family:'Space Mono', monospace;
+    font-size:11px; color:#9ca3af; line-height:1.6;
+  }
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    background:var(--navy);
+    color:var(--chalk-dim);
+    padding:40px 28px;
+    margin-top:40px;
+  }
+  .footer-inner{
+    max-width:1180px; margin:0 auto;
+    display:flex; justify-content:space-between; align-items:center;
+    flex-wrap:wrap; gap:12px;
+  }
+  .footer-inner .mark{font-family:'Anton', sans-serif; font-size:16px;}
+  .footer-inner .mark span{color:var(--gold);}
+  .footer-inner p{
+    font-family:'Space Mono', monospace;
+    font-size:12px; color:rgba(245,242,234,0.55);
+    margin:0;
+  }
+
+  :focus-visible{outline:2px solid var(--gold); outline-offset:2px;}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-mark">HOME OF <span>FOOTBALL</span></div>
+  <div class="search-wrap">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input id="searchInput" type="text" placeholder="Find a league or country…" aria-label="Search leagues">
+  </div>
+  <div class="chips" id="chipRow"></div>
+</nav>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">A directory of the world's game</div>
+    <h1>HOME OF<br>FOOTBALL</h1>
+    <p class="sub">Every confederation, every top flight — from <em>the Camp Nou</em> to a gravel pitch in Nuku'alofa. One list, 141 leagues, no sponsor names.</p>
+  </div>
+  <div class="ticker-frame">
+    <div class="ticker-track" id="tickerTrack"></div>
+  </div>
+  <div class="stat-row">
+    <div class="stat"><b>6</b><span>Confederations</span></div>
+    <div class="stat"><b>141</b><span>Top-flight leagues</span></div>
+    <div class="stat"><b>1</b><span>Ball</span></div>
+  </div>
+</section>
+
+<main id="tablesRoot"></main>
+
+<section class="stats-section">
+  <div class="stats-inner">
+    <div class="stats-head">
+      <div class="eyebrow" style="font-family:'Space Mono', monospace; font-size:12px; letter-spacing:0.14em; text-transform:uppercase;">2025-26 season, final tally</div>
+      <h2>TOP 5 LEAGUE LEADERS</h2>
+      <p>The standout performers across Europe's top five leagues this season — attacking output, chance creation, dribbling and the unglamorous defensive work that rarely trends.</p>
+    </div>
+    <div class="stats-grid" id="statsGrid"></div>
+    <p class="stats-foot">Goals, assists, big chances created and dribbles completed cover the Premier League, La Liga, Serie A, Bundesliga and Ligue 1 combined. Defensive contributions and duels won are Premier League figures — the metric isn't tracked identically league-to-league. Figures are season totals, league play only.</p>
+  </div>
+</section>
+
+<section class="clubs-section">
+  <div class="clubs-head">
+    <div style="font-family:'Space Mono', monospace; font-size:12px; letter-spacing:0.14em; text-transform:uppercase; color:var(--red);">Money vs. silverware</div>
+    <h2>CLUB POWER RANKINGS</h2>
+    <p>The world's ten most valuable clubs (Forbes, 2026) — and how their business size stacks up against what's actually in the trophy cabinet. Squad value is the combined market value of the playing squad; worth is full club enterprise value.</p>
+  </div>
+  <div class="clubs-table-wrap">
+    <table class="clubs-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Club</th>
+          <th class="num">Club Worth</th>
+          <th class="num">Squad Value</th>
+          <th class="num">League Titles</th>
+          <th class="num">Continental Cups</th>
+        </tr>
+      </thead>
+      <tbody id="clubsBody"></tbody>
+    </table>
+  </div>
+  <p class="clubs-foot">Club worth: Forbes' 2026 soccer valuations (enterprise value). Squad value: Transfermarkt, Feb 2026. League titles &amp; continental cups (UEFA Champions League / European Cup): all-time totals through the 2025-26 season.</p>
+</section>
+
+<div class="empty-state" id="emptyState">
+  <h3>No leagues match that search</h3>
+  <p>Try a country name, a league name, or clear the filter.</p>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="mark">HOME OF <span>FOOTBALL</span></div>
+    <p>Built for the badge collectors · league names, not sponsor names</p>
+  </div>
+</footer>
+
+<script>
+const CONFS = {
+  UEFA:     { full: "Europe", desc: "The continent with the deepest bench — from century-old giants to island federations you've never seen on a map." },
+  CONMEBOL: { full: "South America", desc: "Ten countries, ten fiercely-guarded top flights, and the oldest continental rivalry in the sport." },
+  CONCACAF: { full: "North & Central America and the Caribbean", desc: "From MLS expansion markets to island leagues that play on matting pitches between hurricane seasons." },
+  CAF:      { full: "Africa", desc: "54 federations of raw, fast-growing talent — several of these leagues are still finding their broadcast deal." },
+  AFC:      { full: "Asia", desc: "Petrodollar spending next door to leagues run on volunteer budgets — the confederation of contrasts." },
+  OFC:      { full: "Oceania", desc: "The smallest confederation by population, and the one where a ferry schedule can decide a fixture list." }
+};
+
+const DATA = [
+["England","Premier League","ENG","UEFA","https://www.premierleague.com"],
+["Scotland","Scottish Premiership","SCT","UEFA","https://spfl.co.uk"],
+["Wales","Cymru Premier","WAL","UEFA","https://cymrupremier.wales"],
+["Northern Ireland","NIFL Premiership","GB","UEFA","https://nifootballleague.com"],
+["Ireland","League of Ireland Premier Division","IE","UEFA","https://www.leagueofireland.ie"],
+["Spain","La Liga","ES","UEFA","https://www.laliga.com"],
+["Portugal","Primeira Liga","PT","UEFA","https://www.ligaportugal.pt"],
+["France","Ligue 1","FR","UEFA","https://www.ligue1.com"],
+["Germany","Bundesliga","DE","UEFA","https://www.bundesliga.com"],
+["Italy","Serie A","IT","UEFA","https://www.legaseriea.it"],
+["Netherlands","Eredivisie","NL","UEFA","https://www.eredivisie.nl"],
+["Belgium","Belgian Pro League","BE","UEFA","https://www.proleague.be"],
+["Switzerland","Swiss Super League","CH","UEFA","https://www.super-league.ch"],
+["Austria","Austrian Bundesliga","AT","UEFA","https://www.bundesliga.at"],
+["Turkey","Süper Lig","TR","UEFA","https://www.tff.org"],
+["Greece","Super League Greece","GR","UEFA","https://www.superleaguegreece.net"],
+["Russia","Russian Premier League","RU","UEFA","https://premierliga.ru"],
+["Ukraine","Ukrainian Premier League","UA","UEFA","https://www.upl.ua"],
+["Poland","Ekstraklasa","PL","UEFA","https://www.ekstraklasa.org"],
+["Czech Republic","Czech First League","CZ","UEFA","https://www.fortunaliga.cz"],
+["Croatia","HNL","HR","UEFA","https://hnl.hr"],
+["Serbia","Serbian SuperLiga","RS","UEFA","https://www.superliga.rs"],
+["Denmark","Danish Superliga","DK","UEFA","https://superliga.dk"],
+["Sweden","Allsvenskan","SE","UEFA","https://www.allsvenskan.se"],
+["Norway","Eliteserien","NO","UEFA","https://www.eliteserien.no"],
+["Finland","Veikkausliiga","FI","UEFA","https://www.veikkausliiga.com"],
+["Iceland","Besta deild karla","IS","UEFA","https://www.ksi.is"],
+["Romania","Superliga","RO","UEFA","https://www.lpf.ro"],
+["Bulgaria","First League","BG","UEFA","https://www.bfunion.bg"],
+["Hungary","NB I","HU","UEFA","https://www.mlsz.hu"],
+["Slovakia","Niké Liga","SK","UEFA","https://www.futbalsfz.sk"],
+["Slovenia","PrvaLiga","SI","UEFA","https://www.prvaliga.si"],
+["Bosnia and Herzegovina","Premier League of BiH","BA","UEFA","https://www.nfsbih.ba"],
+["North Macedonia","Macedonian First League","MK","UEFA","https://ffm.mk"],
+["Albania","Kategoria Superiore","AL","UEFA","https://www.fshf.org"],
+["Montenegro","Montenegrin First League","ME","UEFA","https://fscg.me"],
+["Kosovo","Football Superleague of Kosovo","XK","UEFA","https://ffk-kosova.com"],
+["Cyprus","Cypriot First Division","CY","UEFA","https://www.cfa.com.cy"],
+["Israel","Ligat Ha'Al","IL","UEFA","https://www.football.org.il"],
+["Georgia","Erovnuli Liga","GE","UEFA","https://gff.ge"],
+["Armenia","Armenian Premier League","AM","UEFA","https://ffa.am"],
+["Azerbaijan","Azerbaijan Premier League","AZ","UEFA","https://www.affa.az"],
+["Kazakhstan","Kazakhstan Premier League","KZ","UEFA","https://pflk.kz"],
+["Belarus","Belarusian Premier League","BY","UEFA","https://abff.by"],
+["Moldova","Moldovan Super Liga","MD","UEFA","https://fmf.md"],
+["Estonia","Meistriliiga","EE","UEFA","https://www.jalgpall.ee"],
+["Latvia","Latvian Higher League","LV","UEFA","https://www.virsliga.lv"],
+["Lithuania","A Lyga","LT","UEFA","https://alyga.lt"],
+["Luxembourg","Luxembourg National Division","LU","UEFA","https://www.flf.lu"],
+["Malta","Maltese Premier League","MT","UEFA","https://www.mfa.com.mt"],
+["Andorra","Primera Divisió","AD","UEFA","https://www.fedandorranadefutbol.ad"],
+["San Marino","Campionato Sammarinese","SM","UEFA","https://www.fsgc.sm"],
+["Faroe Islands","Faroe Islands Premier League","FO","UEFA","https://www.fsf.fo"],
+["Gibraltar","Gibraltar National League","GI","UEFA","https://www.gibraltarfa.com"],
+
+["Argentina","Liga Profesional de Fútbol","AR","CONMEBOL","https://www.ligaprofesional.ar"],
+["Brazil","Brasileirão Série A","BR","CONMEBOL","https://www.cbf.com.br"],
+["Uruguay","Uruguayan Primera División","UY","CONMEBOL","https://www.auf.org.uy"],
+["Chile","Chilean Primera División","CL","CONMEBOL","https://www.anfp.cl"],
+["Colombia","Categoría Primera A","CO","CONMEBOL","https://dimayor.com.co"],
+["Paraguay","Paraguayan Primera División","PY","CONMEBOL","https://www.apf.org.py"],
+["Peru","Liga 1","PE","CONMEBOL","https://ligalfp.net"],
+["Ecuador","Ecuadorian Serie A","EC","CONMEBOL","https://ligapro.ec"],
+["Bolivia","Bolivian Primera División","BO","CONMEBOL","https://www.flb.bo"],
+["Venezuela","Venezuelan Primera División","VE","CONMEBOL","https://www.fvf.org.ve"],
+
+["United States","Major League Soccer","US","CONCACAF","https://www.mlssoccer.com"],
+["Mexico","Liga MX","MX","CONCACAF","https://www.ligamx.net"],
+["Canada","Canadian Premier League","CA","CONCACAF","https://canpl.ca"],
+["Costa Rica","Costa Rican Primera División","CR","CONCACAF","https://www.fedefutbol.net"],
+["Honduras","Liga Nacional de Honduras","HN","CONCACAF","https://www.fenafuth.hn"],
+["Guatemala","Liga Nacional de Guatemala","GT","CONCACAF","https://fedefutgua.org"],
+["El Salvador","Primera División de El Salvador","SV","CONCACAF","https://www.fesfut.org.sv"],
+["Panama","Liga Panameña de Fútbol","PA","CONCACAF","https://www.fepafut.com"],
+["Nicaragua","Primera División de Nicaragua","NI","CONCACAF","https://fenifut.org.ni"],
+["Jamaica","Jamaica Premier League","JM","CONCACAF","https://www.jff.org"],
+["Trinidad and Tobago","TT Premier Football League","TT","CONCACAF","https://www.ttff.org"],
+["Haiti","Ligue Haïtienne","HT","CONCACAF","https://www.fhfhaiti.com"],
+["Dominican Republic","Liga Dominicana de Fútbol","DO","CONCACAF","https://fedofutbol.org"],
+["Cuba","Campeonato Nacional de Fútbol de Cuba","CU","CONCACAF","https://www.fcf.cu"],
+["Guyana","Guyana Elite League","GY","CONCACAF","https://www.guyanafootballfederation.com"],
+["Suriname","SVB Eerste Divisie","SR","CONCACAF","https://www.svb.sr"],
+["Belize","Premier League of Belize","BZ","CONCACAF","https://www.ffb.bz"],
+
+["Egypt","Egyptian Premier League","EG","CAF","https://www.efa.eg"],
+["Morocco","Botola Pro","MA","CAF","https://www.frmf.ma"],
+["Algeria","Algerian Ligue 1","DZ","CAF","https://www.lfp.dz"],
+["Tunisia","Tunisian Ligue Professionnelle 1","TN","CAF","https://www.ftf.org.tn"],
+["Nigeria","NPFL","NG","CAF","https://npfl.ng"],
+["Ghana","Ghana Premier League","GH","CAF","https://www.ghanafa.org"],
+["South Africa","DStv Premiership","ZA","CAF","https://www.premiersoccerleague.co.za"],
+["Kenya","Kenyan Premier League","KE","CAF","https://www.fkfpl.co.ke"],
+["Tanzania","Tanzanian Premier League","TZ","CAF","https://www.tff.co.tz"],
+["Uganda","Uganda Premier League","UG","CAF","https://www.fufa.co.ug"],
+["Zambia","Zambia Super League","ZM","CAF","https://www.fazfootball.com"],
+["Zimbabwe","Zimbabwe Premier Soccer League","ZW","CAF","https://www.zplzimbabwe.co.zw"],
+["Senegal","Ligue 1 Sénégal","SN","CAF","https://www.fsfoot.sn"],
+["Ivory Coast","Ivorian Ligue 1","CI","CAF","https://www.fif.ci"],
+["Cameroon","Elite One","CM","CAF","https://www.fecafoot.cm"],
+["DR Congo","Linafoot","CD","CAF","https://www.linafoot.cd"],
+["Angola","Girabola","AO","CAF","https://www.ffa.co.ao"],
+["Mozambique","Moçambola","MZ","CAF","https://www.fmf.co.mz"],
+["Ethiopia","Ethiopian Premier League","ET","CAF","https://www.ethiopianfootball.com"],
+["Sudan","Sudan Premier League","SD","CAF","https://www.sudanfa.com"],
+["Libya","Libyan Premier League","LY","CAF","https://www.lfflibya.com"],
+["Rwanda","Rwanda Premier League","RW","CAF","https://www.ffrwanda.org"],
+["Botswana","Botswana Premier League","BW","CAF","https://www.bfa.co.bw"],
+
+["Japan","J1 League","JP","AFC","https://www.jleague.jp"],
+["South Korea","K League 1","KR","AFC","https://www.kleague.com"],
+["China","Chinese Super League","CN","AFC","https://cfl-china.cn"],
+["Saudi Arabia","Saudi Pro League","SA","AFC","https://www.spl.com.sa"],
+["Qatar","Qatar Stars League","QA","AFC","https://www.qsl.qa"],
+["United Arab Emirates","UAE Pro League","AE","AFC","https://uaepro-league.ae"],
+["Iran","Persian Gulf Pro League","IR","AFC","https://www.pgpl.ir"],
+["Iraq","Iraqi Premier League","IQ","AFC","https://www.iraqfa.iq"],
+["Australia","A-League Men","AU","AFC","https://www.aleagues.com.au"],
+["India","Indian Super League","IN","AFC","https://www.indiansuperleague.com"],
+["Uzbekistan","Uzbekistan Super League","UZ","AFC","https://www.pfl.uz"],
+["Thailand","Thai League 1","TH","AFC","https://www.thaileague.co.th"],
+["Vietnam","V.League 1","VN","AFC","https://www.vpf.vn"],
+["Indonesia","Liga 1","ID","AFC","https://www.pssi.org"],
+["Malaysia","Malaysia Super League","MY","AFC","https://www.malaysiafootballleague.com"],
+["Singapore","Singapore Premier League","SG","AFC","https://www.singaporepremierleague.com"],
+["Philippines","Philippines Football League","PH","AFC","https://www.pfl.ph"],
+["Bahrain","Bahraini Premier League","BH","AFC","https://www.bfa.bh"],
+["Kuwait","Kuwait Premier League","KW","AFC","https://www.kfa.com.kw"],
+["Jordan","Jordanian Pro League","JO","AFC","https://www.jfa.jo"],
+["Lebanon","Lebanese Premier League","LB","AFC","https://www.lfa.com.lb"],
+["Syria","Syrian Premier League","SY","AFC","https://www.syriafa.org"],
+["Oman","Oman Professional League","OM","AFC","https://www.omanfootball.om"],
+["Myanmar","Myanmar National League","MM","AFC","https://www.mnl-online.com"],
+["Bangladesh","Bangladesh Premier League","BD","AFC","https://www.bff.com.bd"],
+["Nepal","Nepal Super League","NP","AFC","https://www.anfa.com.np"],
+["Hong Kong","Hong Kong Premier League","HK","AFC","https://www.hkfa.com"],
+["Chinese Taipei","Taiwan Football Premier League","TW","AFC","https://www.ctfa.com.tw"],
+["Kyrgyzstan","Kyrgyzstan Premier League","KG","AFC","https://www.kfu.kg"],
+["Tajikistan","Tajikistan Higher League","TJ","AFC","https://www.tff.tj"],
+["Turkmenistan","Ýokary Liga","TM","AFC","https://www.affa.tm"],
+
+["New Zealand","New Zealand National League","NZ","OFC","https://www.nzfootball.co.nz"],
+["Fiji","Fiji Premier League","FJ","OFC","https://www.fijifootball.com.fj"],
+["Papua New Guinea","National Soccer League","PG","OFC","https://www.pngfootball.com.pg"],
+["Solomon Islands","Solomon Islands S-League","SB","OFC","https://www.sifa.com.sb"],
+["Tahiti","Tahiti Ligue 1","PF","OFC","https://www.ftf.pf"],
+["New Caledonia","New Caledonia Super Ligue","NC","OFC","https://www.fncf.nc"],
+["Vanuatu","VFF National Super League","VU","OFC","https://www.vff.vu"],
+["Samoa","Samoa National League","WS","OFC","https://www.fifs.ws"],
+["Tonga","Tonga Major League","TO","OFC","https://www.tongafa.to"],
+["Cook Islands","Cook Islands Round Cup","CK","OFC","https://www.cifa.co.ck"]
+];
+
+const SPECIAL_FLAGS = { ENG: "🏴", SCT: "🏴", WAL: "🏴" };
+function flagFor(iso){
+  if (SPECIAL_FLAGS[iso]) return SPECIAL_FLAGS[iso];
+  return iso.replace(/./g, c => String.fromCodePoint(c.charCodeAt(0) + 127397));
+}
+
+const CONF_ORDER = ["UEFA","CONMEBOL","CONCACAF","CAF","AFC","OFC"];
+
+// Build ticker
+const tickerNames = DATA.map(d => d[1].toUpperCase());
+const tickerContent = tickerNames.concat(tickerNames).map(n => `<span>${n}</span>`).join("");
+document.getElementById("tickerTrack").innerHTML = tickerContent;
+
+// Build confederation chips
+const chipRow = document.getElementById("chipRow");
+chipRow.innerHTML = `<button class="chip active" data-conf="ALL">ALL</button>` +
+  CONF_ORDER.map(c => `<button class="chip" data-conf="${c}">${c}</button>`).join("");
+
+// Build tables
+const root = document.getElementById("tablesRoot");
+root.innerHTML = CONF_ORDER.map(conf => {
+  const rows = DATA.filter(d => d[3] === conf);
+  const meta = CONFS[conf];
+  const rowsHtml = rows.map((d, i) => `
+    <tr class="row conf-row-${conf.toLowerCase()}" data-country="${d[0].toLowerCase()}" data-league="${d[1].toLowerCase()}" data-conf="${conf}">
+      <td class="rank">${String(i+1).padStart(2,'0')}</td>
+      <td class="flag">${flagFor(d[2])}</td>
+      <td class="league-name"><a href="${d[4]}" target="_blank" rel="noopener noreferrer">${d[1]}</a></td>
+      <td class="country">${d[0]}</td>
+    </tr>`).join("");
+  return `
+  <section class="conf-section" data-conf-section="${conf}">
+    <div class="conf-head">
+      <h2>${conf}</h2>
+      <span class="conf-full">${meta.full}</span>
+      <span class="conf-count">${rows.length} leagues</span>
+    </div>
+    <p class="conf-desc">${meta.desc}</p>
+    <table class="league-table">
+      <thead><tr><th>#</th><th></th><th>League</th><th>Country</th></tr></thead>
+      <tbody>${rowsHtml}</tbody>
+    </table>
+  </section>`;
+}).join("");
+
+const STATS = [
+  {
+    title: "Goals",
+    scope: "Big 5 leagues combined",
+    rows: [
+      ["Harry Kane", "Bayern Munich", 36],
+      ["Erling Haaland", "Manchester City", 27],
+      ["Kylian Mbappé", "Real Madrid", 25],
+      ["Vedat Muriqi", "Mallorca", 23],
+      ["Igor Thiago", "Brentford", 22]
+    ]
+  },
+  {
+    title: "Assists",
+    scope: "Big 5 leagues combined",
+    rows: [
+      ["Bruno Fernandes", "Manchester United", 21],
+      ["Michael Olise", "Bayern Munich", 19],
+      ["Federico Dimarco", "Inter Milan", 18],
+      ["Julian Ryerson", "Borussia Dortmund", 15],
+      ["Luis Díaz", "Bayern Munich", 14]
+    ]
+  },
+  {
+    title: "Big Chances Created",
+    scope: "Big 5 leagues combined",
+    rows: [
+      ["Bruno Fernandes", "Manchester United", 32],
+      ["Federico Dimarco", "Inter Milan", 29],
+      ["Michael Olise", "Bayern Munich", 26],
+      ["Kylian Mbappé", "Real Madrid", 22],
+      ["Lamine Yamal", "Barcelona", 21]
+    ]
+  },
+  {
+    title: "Dribbles Completed",
+    scope: "Big 5 leagues combined",
+    rows: [
+      ["Lamine Yamal", "Barcelona", 133],
+      ["Yan Diomandé", "RB Leipzig", 118],
+      ["Vinícius Júnior", "Real Madrid", 87],
+      ["Jeremy Doku", "Manchester City", 83],
+      ["Kenan Yıldız", "Juventus", 78]
+    ]
+  },
+  {
+    title: "Defensive Contributions",
+    scope: "Premier League",
+    rows: [
+      ["Elliot Anderson", "Nottingham Forest", 516],
+      ["Manuel Ugarte", "Manchester United", 410],
+      ["Florentino", "Burnley", 365],
+      ["Rodrigo Bentancur", "Tottenham Hotspur", 340],
+      ["Mats Wieffer", "Brighton", 320]
+    ]
+  },
+  {
+    title: "Duels Won",
+    scope: "Premier League",
+    rows: [
+      ["Elliot Anderson", "Nottingham Forest", 297],
+      ["Virgil van Dijk", "Liverpool", 245],
+      ["Gabriel Magalhães", "Arsenal", 232],
+      ["Kyle Walker", "Burnley", 210],
+      ["James Tarkowski", "Everton", 198]
+    ]
+  }
+];
+
+const statsGrid = document.getElementById("statsGrid");
+statsGrid.innerHTML = STATS.map(stat => {
+  const max = stat.rows[0][2];
+  const rowsHtml = stat.rows.map((r, i) => {
+    const pct = Math.max(6, Math.round((r[2] / max) * 100));
+    return `
+      <div class="bar-row">
+        <span class="bar-rank">${i+1}</span>
+        <div class="bar-main">
+          <div class="bar-label">
+            <span class="bar-name">${r[0]}</span>
+            <span class="bar-value">${r[2]}</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
+        </div>
+      </div>`;
+  }).join("");
+  return `
+    <div class="stat-card">
+      <h3>${stat.title}</h3>
+      <span class="stat-scope">${stat.scope}</span>
+      ${rowsHtml}
+    </div>`;
+}).join("");
+
+const CLUBS = [
+  ["Real Madrid", "La Liga", "$9.5B", "€1.35B", 36, 15],
+  ["Barcelona", "La Liga", "$7.5B", "€1.12B", 28, 5],
+  ["Manchester United", "Premier League", "$7.2B", "€719.2M", 20, 3],
+  ["Liverpool", "Premier League", "$6.2B", "€1.04B", 20, 6],
+  ["Paris Saint-Germain", "Ligue 1", "$5.8B", "€1.19B", 14, 2],
+  ["Bayern Munich", "Bundesliga", "$5.7B", "€981M", 34, 6],
+  ["Manchester City", "Premier League", "$5.5B", "€1.31B", 10, 1],
+  ["Arsenal", "Premier League", "$5.4B", "€1.31B", 14, 0],
+  ["Chelsea", "Premier League", "$4.2B", "€1.17B", 6, 2],
+  ["Tottenham Hotspur", "Premier League", "$3.0B", "€873.5M", 2, 0]
+];
+
+const clubsBody = document.getElementById("clubsBody");
+clubsBody.innerHTML = CLUBS.map((c, i) => `
+  <tr>
+    <td class="rank">${i+1}</td>
+    <td class="club-name">${c[0]}<br><span class="club-league">${c[1]}</span></td>
+    <td class="num worth">${c[2]}</td>
+    <td class="num">${c[3]}</td>
+    <td class="num">${c[4]}</td>
+    <td class="num">${c[5]}</td>
+  </tr>`).join("");
+
+// Filtering logic
+let activeConf = "ALL";
+const searchInput = document.getElementById("searchInput");
+const emptyState = document.getElementById("emptyState");
+
+function applyFilters(){
+  const q = searchInput.value.trim().toLowerCase();
+  let anyVisible = false;
+
+  document.querySelectorAll(".conf-section").forEach(section => {
+    const conf = section.dataset.confSection;
+    const confMatches = activeConf === "ALL" || activeConf === conf;
+    let visibleRows = 0;
+
+    section.querySelectorAll("tbody tr").forEach(row => {
+      const textMatches = !q || row.dataset.country.includes(q) || row.dataset.league.includes(q);
+      const show = confMatches && textMatches;
+      row.style.display = show ? "" : "none";
+      if (show) visibleRows++;
+    });
+
+    const sectionVisible = confMatches && visibleRows > 0;
+    section.style.display = sectionVisible ? "" : "none";
+    if (sectionVisible) anyVisible = true;
+  });
+
+  emptyState.classList.toggle("show", !anyVisible);
+}
+
+searchInput.addEventListener("input", applyFilters);
+chipRow.addEventListener("click", e => {
+  const btn = e.target.closest(".chip");
+  if (!btn) return;
+  chipRow.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
+  btn.classList.add("active");
+  activeConf = btn.dataset.conf;
+  applyFilters();
+});
+</script>
+</body>
+</html>
